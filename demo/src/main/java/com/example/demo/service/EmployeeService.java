@@ -10,9 +10,11 @@ import java.util.List;
 public class EmployeeService {
 
     private final EmployeeRepository repository;
+    private final EmployeeKafkaProducer kafkaProducer;
 
-    public EmployeeService(EmployeeRepository repository) {
+    public EmployeeService(EmployeeRepository repository, EmployeeKafkaProducer kafkaProducer) {
         this.repository = repository;
+        this.kafkaProducer = kafkaProducer;
     }
 
     public List<Employee> findAll() {
@@ -24,7 +26,9 @@ public class EmployeeService {
     }
 
     public Employee save(Employee employee) {
-        return repository.save(employee);
+        Employee saved = repository.save(employee);
+        kafkaProducer.sendMessage("employee.created", saved.getId().toString());
+        return repository.save(saved);
     }
 
     public void delete(Long id) {

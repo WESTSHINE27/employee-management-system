@@ -20,8 +20,6 @@ public class EmployeeWebController {
 
     @GetMapping("/employees")
     public String listEmployees(Model model) {
-        System.out.println("find all calling");
-        System.out.println(service.findAll());
         model.addAttribute("employees", service.findAll());
         return "employees";
     }
